@@ -78,7 +78,7 @@ playConnectFour = function(layers=c(42,100,3),W=NULL,
     list(record,W)
 }
 
-trainWeight = function(W=NULL, layers = c(42,100,3), time = 100)    
+trainWeight = function(W=NULL, layers = c(42,100,3), time = 100, path)    
 {
     if (is.null(W))
         W = ParameterInitializer(layers)
@@ -87,6 +87,8 @@ trainWeight = function(W=NULL, layers = c(42,100,3), time = 100)
         cat(i,'\r')
         res = playConnectFour(layers=layers,W=W)
         W = res[[2]]
+        if (i%%100==0)
+            save(W,file=paste(path,'W.rda',sep=''))
     }
     return(W)
 }
