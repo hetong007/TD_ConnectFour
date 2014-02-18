@@ -10,7 +10,7 @@ ParameterInitializer = function(layers)
     W
 }
 
-ForwardPropagation = function(cf,W)
+ForwardPropagation = function(cf,W,output='all')
 {
     f = function(z) 1/(1+exp(-z))
     
@@ -30,15 +30,44 @@ ForwardPropagation = function(cf,W)
         z[[i+1]] = W[[i]]%*%a[[i]]
         a[[i+1]] = f(z[[i+1]])
     }
-    
-    res = a[[n+1]][2-plyr]
+    if (output=='single')
+        res = a[[n+1]][2-plyr]
+    else
+        res = a[[n+1]]
     return(res)
 }
 
-updateW = function()
+updateW = function(cf,W,alpha,beta,lambda,prev)
+{
+    w = W[[2]]#k*j
+    v = W[[1]]#j*i
+    e2 = prev$e2 
+    e3 = prev$e3
+    h = prev$h
+    x = prev$x
+    y = prev$y
+    ny = ForwardPropagation(cf,W)
+    k = length(y)
     
+    omega = ny-y
+    delta_v = list()
     
+    for (i in 1:k)
+    {
+        delta_v[[i]] = (w[i,]*h*(1-h))%*%t(x)
+        delta_v[[i]] = delta_v[[i]] * (y[i]*(1-y[i]))
+        e3[[i]] = lambda*e3[[i]]+delta_v[[i]]
+        v = v+alpha*omega[i]*e3[[i]]
+    }
     
+    delta_w = (y*(1-y))%*%t(h)
+    e2 = lambda*e2+delta_w
+    w = w+beta*diag(as.vector(omega))%*%e2
     
-    
+    x = as.vector(board(cf))
+    h = 1/(1+exp(-v%*%x))
+    W = list(v,w)
+    prev = list(e2=e2,e3=e3,h=h,x=x,y=ny)
+    return(list(W,prev))
+}    
     

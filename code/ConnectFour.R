@@ -7,6 +7,23 @@ ConnectFour = function(board=mat.or.vec(6,7),player=1)
     new("ConnectFour",board=board,player=player)
 }
 
+setMethod("show",
+          signature = "ConnectFour",
+          definition = function(object)
+          {
+              cat('player',object@player,'on board\n')
+              bd = object@board
+              cbd = as.character(bd)
+              cbd[which(cbd=='0')] = '.'
+              cbd[which(cbd=='1')] = 'O'
+              cbd[which(cbd=='-1')] = 'I'
+              cbd = matrix(cbd,nrow=nrow(bd))
+              cbd = data.frame(cbd)
+              names(cbd) = as.character(1:7)
+              show(cbd)
+          }
+)
+
 setGeneric("player", function(object, ...) standardGeneric("player"))
 
 setMethod("player",
@@ -45,7 +62,7 @@ setMethod("play",
               plyr = object@player
               if (i<1 || i>ncol(bd) || bd[1,i]!=0)
                   stop('Invalid move.')
-              ind = which(bd[,i]>0)[1]-1
+              ind = which(bd[,i]!=0)[1]-1
               if (is.na(ind))
                   ind = nrow(bd)
               bd[ind,i] = plyr
@@ -63,29 +80,63 @@ setMethod("win",
               bd = object@board
               n = nrow(bd)
               m = ncol(bd)
+              
+              for (i in 1:(n-3))
+                  for (j in 1:m)
+                  {
+                      tmp = bd[i,j]
+                      if (tmp!=0)
+                      {
+                          cnt = 1
+                          while (cnt<4 && bd[i+cnt,j]==tmp)
+                              cnt = cnt+1
+                          if (cnt>=4)
+                              return(object@player)
+                      }
+                  }
+              
+              for (i in 1:n)
+                  for (j in 1:(m-3))
+                  {
+                      tmp = bd[i,j]
+                      if (tmp!=0)
+                      {
+                          cnt = 1
+                          while (cnt<4 && bd[i,j+cnt]==tmp)
+                              cnt = cnt+1
+                          if (cnt>=4)
+                              return(object@player)
+                      }
+                  }
+              
               for (i in 1:(n-3))
                   for (j in 1:(m-3))
                   {
                       tmp = bd[i,j]
-                      
-                      cnt = 1
-                      while (cnt<4 && bd[i+cnt,j]==tmp)
-                          cnt = cnt+1
-                      if (cnt>=4)
-                          return(object@player)
-                      
-                      cnt = 1
-                      while (cnt<4 && bd[i,j+cnt]==tmp)
-                          cnt = cnt+1
-                      if (cnt>=4)
-                          return(object@player)
-                      
-                      cnt = 1
-                      while (cnt<4 && bd[i+cnt,j+cnt]==tmp)
-                          cnt = cnt+1
-                      if (cnt>=4)
-                          return(object@player)
+                      if (tmp!=0)
+                      {
+                          cnt = 1
+                          while (cnt<4 && bd[i+cnt,j+cnt]==tmp)
+                              cnt = cnt+1
+                          if (cnt>=4)
+                              return(object@player)
+                      }
                   }
+              
+              for (i in 4:n)
+                  for (j in 1:(m-3))
+                  {
+                      tmp = bd[i,j]
+                      if (tmp!=0)
+                      {
+                          cnt = 1
+                          while (cnt<4 && bd[i-cnt,j+cnt]==tmp)
+                              cnt = cnt+1
+                          if (cnt>=4)
+                              return(object@player)
+                      }
+                  }
+              
               return(0)
           }
 )
