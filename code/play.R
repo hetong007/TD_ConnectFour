@@ -84,7 +84,7 @@ trainWeight = function(W=NULL, layers = c(42,100,3), time = 100)
         W = ParameterInitializer(layers)
     for (i in 1:time)
     {
-        cat(i,'\n')
+        cat(i,'\r')
         res = playConnectFour(layers=layers,W=W)
         W = res[[2]]
     }
@@ -96,6 +96,42 @@ trainWeight = function(W=NULL, layers = c(42,100,3), time = 100)
 
 compete = function(W1,W2,rounds=10)
 {
+    W = list(W1,W2)
+    res = rep(0,rounds)
     
+    for (round in 1:rounds)
+    {
+        cat(round,'\r')
+        Ending = FALSE
+        cf = ConnectFour(player=as.numeric(runif(1)>0.5)*2-1)
+        
+        while(!Ending)
+        {
+            moves = validStep(cf)
+            mx = -1
+            mxi = 0
+            for (i in moves)
+            {
+                tbd = play(cf,i)
+                plyr = 1.5-player(cf)/2
+                pred = ForwardPropagation(tbd,W[[plyr]])
+                pred = pred[2-player(cf)]
+                if (pred>mx)
+                {
+                    mx = pred
+                    mxi = i
+                }
+            }
+            tbd = play(cf,mxi)
+            result = win(tbd)
+            if (result!=0 || all(board(tbd)!=0))
+                Ending = TRUE
+            
+            cf = tbd
+        }
+        res[round] = result
+    }
+    return(res)
 }
 
+#com = compete(W1,W2,rounds=100)
