@@ -1,0 +1,3 @@
+#source('ConnectFour.R')
+
+ParameterInitialize()
