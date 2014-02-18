@@ -1,8 +1,8 @@
 setClass("ConnectFour",
          slots = c(board = "matrix",
-                   player = "integer"))
+                   player = "numeric"))
 
-ConnectFour = function(board=mat.or.vec(6,7),player='1')
+ConnectFour = function(board=mat.or.vec(6,7),player=1)
 {
     new("ConnectFour",board=board,player=player)
 }
