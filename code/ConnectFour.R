@@ -11,7 +11,7 @@ setMethod("show",
           signature = "ConnectFour",
           definition = function(object)
           {
-              cat('player',object@player,'on board\n')
+              cat('Waiting for player',object@player,'\n')
               bd = object@board
               cbd = as.character(bd)
               cbd[which(cbd=='0')] = '.'
@@ -29,7 +29,7 @@ setGeneric("player", function(object, ...) standardGeneric("player"))
 setMethod("player",
           signature = "ConnectFour",
           definition = function(object, ...)
-              bd = object@player
+              object@player
 )
 
 setGeneric("board", function(object, ...) standardGeneric("board"))
@@ -37,7 +37,7 @@ setGeneric("board", function(object, ...) standardGeneric("board"))
 setMethod("board",
           signature = "ConnectFour",
           definition = function(object, ...)
-              bd = object@board
+              object@board
 )
 
 setGeneric("validStep", function(object, ...) standardGeneric("validStep"))
@@ -49,6 +49,17 @@ setMethod("validStep",
               bd = object@board
               ans = which(bd[1,]==0)
               ans
+          }
+)
+
+setGeneric("changePlayer", function(object, ...) standardGeneric("changePlayer"))
+
+setMethod("changePlayer",
+          signature = "ConnectFour",
+          definition = function(object, ...)
+          {
+              object@board = -object@board
+              object
           }
 )
 
@@ -65,7 +76,7 @@ setMethod("play",
               ind = which(bd[,i]!=0)[1]-1
               if (is.na(ind))
                   ind = nrow(bd)
-              bd[ind,i] = plyr
+              bd[ind,i] = 1
               ans = ConnectFour(bd,-plyr)
               ans
           }
@@ -91,7 +102,7 @@ setMethod("win",
                           while (cnt<4 && bd[i+cnt,j]==tmp)
                               cnt = cnt+1
                           if (cnt>=4)
-                              return(object@player)
+                              return(tmp)
                       }
                   }
               
@@ -105,7 +116,7 @@ setMethod("win",
                           while (cnt<4 && bd[i,j+cnt]==tmp)
                               cnt = cnt+1
                           if (cnt>=4)
-                              return(object@player)
+                              return(tmp)
                       }
                   }
               
@@ -119,7 +130,7 @@ setMethod("win",
                           while (cnt<4 && bd[i+cnt,j+cnt]==tmp)
                               cnt = cnt+1
                           if (cnt>=4)
-                              return(object@player)
+                              return(tmp)
                       }
                   }
               
@@ -133,7 +144,7 @@ setMethod("win",
                           while (cnt<4 && bd[i-cnt,j+cnt]==tmp)
                               cnt = cnt+1
                           if (cnt>=4)
-                              return(object@player)
+                              return(tmp)
                       }
                   }
               

@@ -19,7 +19,6 @@ ForwardPropagation = function(cf,W,output='all')
     n = length(W)
     
     x = as.vector(board(cf))
-    plyr = player(cf)
 
     a = vector(n+1,mode='list')
     a[[1]] = x
@@ -30,10 +29,7 @@ ForwardPropagation = function(cf,W,output='all')
         z[[i+1]] = W[[i]]%*%a[[i]]
         a[[i+1]] = f(z[[i+1]])
     }
-    if (output=='single')
-        res = a[[n+1]][2-plyr]
-    else
-        res = a[[n+1]]
+    res = a[[n+1]]
     return(res)
 }
 

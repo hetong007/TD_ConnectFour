@@ -30,15 +30,18 @@ playConnectFour = function(layers=c(42,100,3),W=NULL,
     
     while(!Ending)
     {
+        #Here to change the point of view
+        cf = changePlayer(cf)
+        id = player(cf)
+        
         moves = validStep(cf)
         mx = -1
         mxi = 0
         for (i in moves)
         {
             tbd = play(cf,i)
-            #pred = predict(tbd,W)
             pred = ForwardPropagation(tbd,W)
-            pred = pred[2-player(cf)]
+            pred = pred[1]#pred = pred[2-player(cf)]
             #cat(pred,counter,'\n')
             if (pred>mx)
             {
@@ -52,7 +55,10 @@ playConnectFour = function(layers=c(42,100,3),W=NULL,
             Ending = TRUE
             
         counter = counter+1
-        record[[counter]] = tbd
+        if (player(tbd)==-1)
+            record[[counter]] = tbd
+        else
+            record[[counter]] = changePlayer(tbd)
         cf = tbd
         if (learning)
         {
@@ -78,7 +84,7 @@ playConnectFour = function(layers=c(42,100,3),W=NULL,
     list(record,W)
 }
 
-trainWeight = function(W=NULL, layers = c(42,100,3), time = 100, path)    
+trainWeight = function(W=NULL, layers=c(42,100,3), time=100, path=NULL)    
 {
     if (is.null(W))
         W = ParameterInitializer(layers)
@@ -87,7 +93,7 @@ trainWeight = function(W=NULL, layers = c(42,100,3), time = 100, path)
         cat(i,'\r')
         res = playConnectFour(layers=layers,W=W)
         W = res[[2]]
-        if (i%%100==0)
+        if (!is.null(path) && i%%100==0)
             save(W,file=paste(path,'W.rda',sep=''))
     }
     return(W)
@@ -95,6 +101,7 @@ trainWeight = function(W=NULL, layers = c(42,100,3), time = 100, path)
 
 #W = trainWeight()
 #W = trainWeight(W=W)
+#W = trainWeight(W=W,time=1000,path='~/github/TD_ConnectFour/')
 
 compete = function(W1,W2,rounds=10)
 {
