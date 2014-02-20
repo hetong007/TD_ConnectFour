@@ -14,9 +14,9 @@ setMethod("show",
               cat('Waiting for player',object@player,'\n')
               bd = object@board
               cbd = as.character(bd)
-              cbd[which(cbd=='0')] = '.'
-              cbd[which(cbd=='1')] = 'O'
-              cbd[which(cbd=='-1')] = 'I'
+              cbd[which(cbd=='0')] = ' '
+              cbd[which(cbd=='1')] = 'o'
+              cbd[which(cbd=='-1')] = 'x'
               cbd = matrix(cbd,nrow=nrow(bd))
               cbd = data.frame(cbd)
               names(cbd) = as.character(1:7)
@@ -76,7 +76,7 @@ setMethod("play",
               ind = which(bd[,i]!=0)[1]-1
               if (is.na(ind))
                   ind = nrow(bd)
-              bd[ind,i] = 1
+              bd[ind,i] = plyr
               ans = ConnectFour(bd,-plyr)
               ans
           }

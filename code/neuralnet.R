@@ -18,7 +18,7 @@ ForwardPropagation = function(cf,W,output='all')
         stop('Not enough input.')
     n = length(W)
     
-    x = as.vector(board(cf))
+    x = c(as.vector(board(cf)),player(cf))
 
     a = vector(n+1,mode='list')
     a[[1]] = x
@@ -33,7 +33,7 @@ ForwardPropagation = function(cf,W,output='all')
     return(res)
 }
 
-updateW = function(cf,W,alpha,beta,lambda,prev)
+updateW = function(cf,W,alpha,beta,lambda,prev,Ending,result)
 {
     w = W[[2]]#k*j
     v = W[[1]]#j*i
@@ -42,17 +42,33 @@ updateW = function(cf,W,alpha,beta,lambda,prev)
     h = prev$h
     x = prev$x
     y = prev$y
-    ny = ForwardPropagation(cf,W)
     k = length(y)
     
+    if (Ending)
+    {
+        #browser()
+        if (result==1)
+        {
+            ny = c(1,0,0)
+        }
+        else if (result==-1)
+        {
+            ny = c(0,0,1)
+        }
+        else
+            ny = c(0,1,0)
+    }
+    else
+        ny = ForwardPropagation(cf,W)
+    
     omega = ny-y
-    delta_v = list()
+    #delta_v = list()
     
     for (i in 1:k)
     {
-        delta_v[[i]] = (w[i,]*h*(1-h))%*%t(x)
-        delta_v[[i]] = delta_v[[i]] * (y[i]*(1-y[i]))
-        e3[[i]] = lambda*e3[[i]]+delta_v[[i]]
+        delta_v = (w[i,]*h*(1-h))%*%t(x)
+        delta_v = delta_v * (y[i]*(1-y[i]))
+        e3[[i]] = lambda*e3[[i]]+delta_v
         v = v+alpha*omega[i]*e3[[i]]
     }
     
@@ -60,7 +76,7 @@ updateW = function(cf,W,alpha,beta,lambda,prev)
     e2 = lambda*e2+delta_w
     w = w+beta*diag(as.vector(omega))%*%e2
     
-    x = as.vector(board(cf))
+    x = c(as.vector(board(cf)),player(cf))
     h = 1/(1+exp(-v%*%x))
     W = list(v,w)
     prev = list(e2=e2,e3=e3,h=h,x=x,y=ny)
