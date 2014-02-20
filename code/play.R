@@ -20,10 +20,15 @@ playConnectFour = function(W1,W2=W1)
         for (i in moves)
         {
             tbd = play(cf,i)
-            plyr = 1.5-player(cf)/2
+            #plyr = 1.5-player(cf)/2
+            if (id==-1)
+                plyr = 2
+            else
+                plyr = 1
             pred = ForwardPropagation(tbd,W[[plyr]])
             #pred = ForwardPropagation(tbd,W)
-            pred = pred[2-player(cf)]
+            #pred = pred[2-player(cf)]
+            pred = pred[plyr]
             if (pred>mx)
             {
                 mx = pred
@@ -44,7 +49,7 @@ playConnectFour = function(W1,W2=W1)
     record
 }
 
-singleTrain = function(record,layers=c(43,50,3),W=NULL,
+singleTrain = function(record,layers=c(43,50,2),W=NULL,
                            alpha=0.1,beta=0.2,lambda=0.5)
 {
     w = W[[2]]
@@ -81,18 +86,25 @@ singleTrain = function(record,layers=c(43,50,3),W=NULL,
     W
 }
 
-trainWeight = function(W=NULL, layers=c(43,50,3), time=100, path=NULL)    
+trainWeight = function(W=NULL, layers=c(43,50,2), time=100, 
+                       path=NULL, records=TRUE)
 {
     if (is.null(W))
         W = ParameterInitializer(layers)
+    if (records)
+        games = list()
     for (i in 1:time)
     {
         cat(i,'\n')
         record = playConnectFour(W)
+        if (records)
+            games[[i]] = record
         W = singleTrain(record,W=W)
         if (!is.null(path) && i%%100==0)
             save(W,file=paste(path,'W.rda',sep=''))
     }
+    if (records)
+        return(list(W,games))
     return(W)
 }
 

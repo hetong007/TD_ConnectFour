@@ -49,14 +49,19 @@ updateW = function(cf,W,alpha,beta,lambda,prev,Ending,result)
         #browser()
         if (result==1)
         {
-            ny = c(1,0,0)
+            #ny = c(1,0,0)
+            ny = c(1,0)
         }
         else if (result==-1)
         {
-            ny = c(0,0,1)
+            #ny = c(0,0,1)
+            ny = c(0,1)
         }
         else
-            ny = c(0,1,0)
+        {
+            #ny = c(0,1,0)
+            ny = c(0.5,0.5)
+        }
     }
     else
         ny = ForwardPropagation(cf,W)
