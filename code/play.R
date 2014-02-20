@@ -28,7 +28,7 @@ playConnectFour = function(W1,W2=W1)
             pred = ForwardPropagation(tbd,W[[plyr]])
             #pred = ForwardPropagation(tbd,W)
             #pred = pred[2-player(cf)]
-            pred = pred[plyr]
+            pred = pred[plyr]/sum(pred)
             if (pred>mx)
             {
                 mx = pred
@@ -50,7 +50,7 @@ playConnectFour = function(W1,W2=W1)
 }
 
 singleTrain = function(record,layers=c(43,50,2),W=NULL,
-                           alpha=0.1,beta=0.2,lambda=0.5)
+                           alpha=0.1,beta=0.1,lambda=0.1)
 {
     w = W[[2]]
     v = W[[1]]
@@ -87,7 +87,7 @@ singleTrain = function(record,layers=c(43,50,2),W=NULL,
 }
 
 trainWeight = function(W=NULL, layers=c(43,50,2), time=100, 
-                       path=NULL, records=TRUE)
+                       random=FALSE, path=NULL, records=TRUE)
 {
     if (is.null(W))
         W = ParameterInitializer(layers)
@@ -96,7 +96,10 @@ trainWeight = function(W=NULL, layers=c(43,50,2), time=100,
     for (i in 1:time)
     {
         cat(i,'\n')
-        record = playConnectFour(W)
+        if (random)
+            record = randomGames(1)
+        else
+            record = playConnectFour(W)
         if (records)
             games[[i]] = record
         W = singleTrain(record,W=W)
@@ -111,3 +114,38 @@ trainWeight = function(W=NULL, layers=c(43,50,2), time=100,
 #W = trainWeight()
 #W = trainWeight(W=W)
 #W = trainWeight(W=W,time=1000,path='~/github/TD_ConnectFour/')
+
+randomGames = function(num = 1000)
+{
+    games = list()
+    for (game in 1:num)
+    {
+        cat(game,'\r')
+        cf = ConnectFour()
+        record = list()
+        counter = 0
+        
+        Ending = FALSE
+        result = 0
+        
+        while(!Ending)
+        {
+            id = player(cf)
+            moves = validStep(cf)
+            
+            mxi = sample(moves,1)
+            tbd = play(cf,mxi)
+            
+            result = win(tbd)
+            if (result!=0 || length(validStep(tbd))==0)
+                Ending = TRUE
+            
+            counter = counter+1
+            record[[counter]] = tbd
+            cf = tbd
+        }
+    
+        games[[game]] = record
+    }
+    games
+}
