@@ -97,7 +97,7 @@ trainWeight = function(W=NULL, layers=c(43,50,2), time=100,
     {
         cat(i,'\n')
         if (random)
-            record = randomGames(1)
+            record = randomGames(1)[[1]]
         else
             record = playConnectFour(W)
         if (records)
@@ -120,7 +120,7 @@ randomGames = function(num = 1000)
     games = list()
     for (game in 1:num)
     {
-        cat(game,'\r')
+        #cat(game,'\r')
         cf = ConnectFour()
         record = list()
         counter = 0
