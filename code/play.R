@@ -97,7 +97,7 @@ trainWeight = function(W=NULL, layers=c(43,50,2), time=100,
     {
         cat(i,'\n')
         if (random)
-            record = randomGames(1)[[1]]
+            record = randomGames()
         else
             record = playConnectFour(W)
         if (records)
@@ -115,37 +115,30 @@ trainWeight = function(W=NULL, layers=c(43,50,2), time=100,
 #W = trainWeight(W=W)
 #W = trainWeight(W=W,time=1000,path='~/github/TD_ConnectFour/')
 
-randomGames = function(num = 1000)
+randomGames = function()
 {
-    games = list()
-    for (game in 1:num)
-    {
-        #cat(game,'\r')
-        cf = ConnectFour()
-        record = list()
-        counter = 0
-        
-        Ending = FALSE
-        result = 0
-        
-        while(!Ending)
-        {
-            id = player(cf)
-            moves = validStep(cf)
-            
-            mxi = sample(moves,1)
-            tbd = play(cf,mxi)
-            
-            result = win(tbd)
-            if (result!=0 || length(validStep(tbd))==0)
-                Ending = TRUE
-            
-            counter = counter+1
-            record[[counter]] = tbd
-            cf = tbd
-        }
+    cf = ConnectFour()
+    record = list()
+    counter = 0
     
-        games[[game]] = record
+    Ending = FALSE
+    result = 0
+    
+    while(!Ending)
+    {
+        id = player(cf)
+        moves = validStep(cf)
+        
+        mxi = sample(moves,1)
+        tbd = play(cf,mxi)
+        
+        result = win(tbd)
+        if (result!=0 || full(tbd))#length(validStep(tbd))==0)
+            Ending = TRUE
+        
+        counter = counter+1
+        record[[counter]] = tbd
+        cf = tbd
     }
-    games
+    record
 }

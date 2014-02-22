@@ -40,6 +40,18 @@ setMethod("board",
               object@board
 )
 
+setGeneric("full", function(object, ...) standardGeneric("full"))
+
+setMethod("full",
+          signature = "ConnectFour",
+          definition = function(object, ...)
+          {
+              bd = object@board
+              ans = all(bd==0)
+              ans
+          }
+)
+
 setGeneric("validStep", function(object, ...) standardGeneric("validStep"))
 
 setMethod("validStep",
