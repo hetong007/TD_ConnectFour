@@ -5,4 +5,4 @@ This is a practice for **Temporal Difference Learning Algorithm**, mostly inspir
 
 Implementation method comes from this [document](http://modelai.gettysburg.edu/2013/tdgammon/pa4.pdf).
 
-My program requires 1 hour for 10000 games. It could be faster in the future.
+The result is not very good and I am looking for a solution now.
