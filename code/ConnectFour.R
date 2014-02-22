@@ -47,7 +47,7 @@ setMethod("full",
           definition = function(object, ...)
           {
               bd = object@board
-              ans = all(bd==0)
+              ans = all(bd!=0)
               ans
           }
 )
@@ -83,8 +83,10 @@ setMethod("play",
           {
               bd = object@board
               plyr = object@player
-              if (i<1 || i>ncol(bd) || bd[1,i]!=0)
+              if (i<1 || i>ncol(bd))
                   stop('Invalid move.')
+              if (bd[1,i]!=0)
+                  stop('Full!')
               ind = which(bd[,i]!=0)[1]-1
               if (is.na(ind))
                   ind = nrow(bd)

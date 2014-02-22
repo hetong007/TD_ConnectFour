@@ -129,7 +129,13 @@ randomGames = function()
         id = player(cf)
         moves = validStep(cf)
         
-        mxi = sample(moves,1)
+        if (length(moves)>1)
+            mxi = sample(moves,1)
+        else
+            mxi = moves
+            
+        if (length(mxi)==0)
+            browser()
         tbd = play(cf,mxi)
         
         result = win(tbd)
