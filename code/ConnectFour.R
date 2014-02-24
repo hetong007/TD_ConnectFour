@@ -40,6 +40,22 @@ setMethod("board",
               object@board
 )
 
+setGeneric("feature", function(object, ...) standardGeneric("feature"))
+
+setMethod("feature",
+          signature = "ConnectFour",
+          definition = function(object, ...)
+          {
+              x = c(as.vector(board(object)),player(object))
+              x[which(x==-1)] = 2
+              ans = mat.or.vec(2,43)
+              for (i in which(x>0))
+                  ans[x[i],i] = 1
+              ans = as.numeric(ans)
+              ans
+          }
+)
+
 setGeneric("full", function(object, ...) standardGeneric("full"))
 
 setMethod("full",

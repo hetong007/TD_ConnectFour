@@ -18,7 +18,7 @@ ForwardPropagation = function(cf,W,output='all')
         stop('Not enough input.')
     n = length(W)
     
-    x = c(as.vector(board(cf)),player(cf))
+    x = feature(cf)
 
     a = vector(n+1,mode='list')
     a[[1]] = x
@@ -43,23 +43,20 @@ updateW = function(cf,W,alpha,beta,lambda,prev,Ending,result)
     x = prev$x
     y = prev$y
     k = length(y)
-    
+
     if (Ending)
     {
         #browser()
         if (result==1)
         {
-            #ny = c(1,0,0)
             ny = c(1,0)
         }
         else if (result==-1)
         {
-            #ny = c(0,0,1)
             ny = c(0,1)
         }
         else
         {
-            #ny = c(0,1,0)
             ny = c(0.5,0.5)
         }
     }
@@ -81,7 +78,7 @@ updateW = function(cf,W,alpha,beta,lambda,prev,Ending,result)
     e2 = lambda*e2+delta_w
     w = w+beta*diag(as.vector(omega))%*%e2
     
-    x = c(as.vector(board(cf)),player(cf))
+    x = feature(cf)
     h = 1/(1+exp(-v%*%x))
     W = list(v,w)
     prev = list(e2=e2,e3=e3,h=h,x=x,y=ny)

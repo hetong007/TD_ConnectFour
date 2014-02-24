@@ -49,14 +49,23 @@ playConnectFour = function(W1,W2=W1)
     record
 }
 
-singleTrain = function(record,layers=c(43,50,2),W=NULL,
+singleTrain = function(record,layers=c(86,50,2),W=NULL,
                            alpha=0.1,beta=0.1,lambda=0.1)
 {
     w = W[[2]]
     v = W[[1]]
-    x = c(as.vector(board(record[[1]])),player(record[[1]]))
+    if (length(record)>2)
+    {
+        
+        x = feature(record[[1]])
+        y = ForwardPropagation(record[[1]],W)
+    }
+    else
+    {
+        x = feature(record)
+        y = ForwardPropagation(record,W)
+    }
     h = 1/(1+exp(-v%*%x))
-    y = ForwardPropagation(record[[1]],W)
     k = length(y)
     e2 = (y*(1-y))%*%t(h)
     
@@ -71,22 +80,29 @@ singleTrain = function(record,layers=c(43,50,2),W=NULL,
     prev = list(x=x,h=h,y=y,e2=e2,e3=e3)
     
     n = length(record)
-    result = win(record[[n]])
+    if (n>1)
+        result = win(record[[n]])
+    else
+        result = win(record)
     
-    for (i in 2:(n-1))
+    if (n>1)
     {
-        upd = updateW(record[[i]],W,alpha,beta,lambda,prev,FALSE,0)
-        W = upd[[1]]
-        prev = upd[[2]]
+        for (i in 2:(n-1))
+        {
+            upd = updateW(record[[i]],W,alpha,beta,lambda,prev,FALSE,0)
+            W = upd[[1]]
+            prev = upd[[2]]
+        }
+        upd = updateW(record[[n]],W,alpha,beta,lambda,prev,TRUE,result)
     }
-    
-    upd = updateW(record[[n]],W,alpha,beta,lambda,prev,TRUE,result)
+    else
+        upd = updateW(record,W,alpha,beta,lambda,prev,TRUE,result)
     
     W = upd[[1]]
     W
 }
 
-trainWeight = function(W=NULL, layers=c(43,50,2), time=100, 
+trainWeight = function(W=NULL, layers=c(86,50,2), time=100, 
                        random=FALSE, path=NULL, records=TRUE)
 {
     if (is.null(W))
@@ -147,4 +163,30 @@ randomGames = function()
         cf = tbd
     }
     record
+}
+
+trainLast = function(W=NULL, layers=c(86,50,2), time=100, 
+                       random=FALSE, path=NULL, records=TRUE)
+{
+    if (is.null(W))
+        W = ParameterInitializer(layers)
+    if (records)
+        games = list()
+    for (i in 1:time)
+    {
+        cat(i,'\n')
+        if (random)
+            record = randomGames()
+        else
+            record = playConnectFour(W)
+        record = record[[length(record)]]
+        if (records)
+            games[[i]] = record
+        W = singleTrain(record,W=W)
+        if (!is.null(path) && i%%100==0)
+            save(W,file=paste(path,'W.rda',sep=''))
+    }
+    if (records)
+        return(list(W,games))
+    return(W)
 }
