@@ -5,4 +5,4 @@ This is a practice for **Temporal Difference Learning Algorithm**, mostly inspir
 
 Implementation method comes from this [document](http://modelai.gettysburg.edu/2013/tdgammon/pa4.pdf).
 
-The result is not very good and I am looking for a solution now.
+The result is not very good and I am looking for a solution now. Possibly using large amount of random games to initialize.
